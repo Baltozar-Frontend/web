@@ -3,258 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Мамац София | Svinocoin Miner</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <title>Sofia Clicker | Energy & Skins</title>
     <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
+        :root { --pink: #ff69b4; --gold: #f3ba2f; --bg: #050505; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; height: 100vh; }
+        
+        /* Баланс */
+        .header { margin-top: 30px; text-align: center; z-index: 10; }
+        #score { font-size: 3.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(243,186,47,0.4); }
 
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+        /* Центр: София и Энергия */
+        .game-zone { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
 
-        /* Хедер с балансом как в твоем проекте */
-        .header {
-            margin-top: 50px;
-            text-align: center;
+        .main-char {
+            width: 260px; height: 260px; border-radius: 50%;
+            border: 8px solid var(--pink);
+            background-size: cover; background-position: center;
+            transition: 0.1s, filter 0.3s; cursor: pointer;
+            box-shadow: 0 0 40px rgba(255, 105, 180, 0.2);
+            position: relative;
         }
+        .main-char:active { transform: scale(0.95); }
+        .main-char.tired { filter: grayscale(1) opacity(0.5); border-color: #444; }
 
-        .balance {
-            font-size: 3.5rem;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-shadow: 0 0 20px #f3ba2f;
-        }
+        /* Полоска энергии */
+        .energy-box { width: 80%; max-width: 300px; margin-top: 30px; }
+        .energy-info { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
+        .energy-bar { width: 100%; height: 12px; background: #1a1a1a; border-radius: 20px; overflow: hidden; border: 1px solid #333; }
+        #energy-fill { width: 100%; height: 100%; background: linear-gradient(90deg, var(--pink), var(--gold)); transition: width 0.2s; box-shadow: 0 0 10px var(--pink); }
 
-        /* Мамац София - центральный объект (твоя 1.png) */
-        .click-area {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* Остальной интерфейс (Скины) */
+        #skins-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 100; display: none; padding: 25px; overflow-y: auto; }
+        .skin-item { background: #111; padding: 15px; border-radius: 20px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #222; }
+        .skin-preview { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--pink); }
+        .buy-btn { background: var(--pink); border: none; padding: 10px 18px; border-radius: 12px; color: #fff; font-weight: bold; margin-left: auto; }
+        .buy-btn.owned { background: #222; color: #555; }
 
-        .sofia-main {
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            /* Ссылка на твой ассет */
-            background: url('https://raw.githubusercontent.com/Baltozar-Frontend/bell.github.io/main/img/1.png') center/cover;
-            border: 8px solid #ff69b4;
-            box-shadow: 0 0 50px rgba(255, 105, 180, 0.4);
-            cursor: pointer;
-            transition: transform 0.05s;
-        }
-
-        .sofia-main:active {
-            transform: scale(0.95);
-        }
-
-        /* Система Энергии */
-        .energy-container {
-            width: 85%;
-            margin-bottom: 120px;
-        }
-
-        .energy-text {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-
-        .energy-bar {
-            width: 100%;
-            height: 15px;
-            background: #222;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .energy-fill {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff69b4, #f3ba2f);
-            transition: width 0.2s;
-        }
-
-        /* Навигация (Задания и т.д.) */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #111;
-            display: flex;
-            justify-content: space-around;
-            padding: 20px 0;
-            border-top: 1px solid #333;
-        }
-
-        .nav-item {
-            font-size: 0.8rem;
-            color: #666;
-            text-align: center;
-        }
-
-        .nav-item.active { color: #ff69b4; }
-
-        /* Всплывающий текст клика */
-        .pop {
-            position: fixed;
-            color: #f3ba2f;
-            font-size: 2rem;
-            font-weight: 900;
-            pointer-events: none;
-            animation: fly 0.6s ease-out forwards;
-            z-index: 100;
-        }
-
-        @keyframes fly {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-100px); }
-        }
-
-        /* Окно заданий */
-        #task-window {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 200;
-            display: none; padding: 30px;
-        }
-        .task-card {
-            background: #111;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #000; padding: 20px; border-top: 1px solid #222; }
+        .nav-item { flex: 1; text-align: center; cursor: pointer; font-size: 0.8rem; opacity: 0.5; }
+        .nav-item.active { opacity: 1; color: var(--pink); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <audio id="click-sound" src="https://raw.githubusercontent.com/Baltozar-Frontend/bell.github.io/main/sound/click.mp3"></audio>
+    <div class="header">
+        <div id="score">0</div>
+        <div style="font-size: 0.7rem; color: #555; letter-spacing: 2px;">$SVINO COIN</div>
+    </div>
 
-    <div id="main-view" style="display: flex; flex-direction: column; align-items: center; height: 100%; width: 100%;">
-        <div class="header">
-            <div style="font-size: 0.7rem; color: #555; letter-spacing: 2px;">SVINOCOIN BALANCE</div>
-            <div class="balance">
-                <span id="score">0</span>
-            </div>
-        </div>
-
-        <div class="click-area">
-            <div class="sofia-main" id="sofia"></div>
-        </div>
-
-        <div class="energy-container">
-            <div class="energy-text">
-                <span>⚡ <span id="energy-count">1000</span> / 1000</span>
-                <span style="color: #ff69b4;">Level 1</span>
+    <div class="game-zone">
+        <div class="main-char" id="sofia" style="background-image: url('https://raw.githubusercontent.com/Baltozar-Frontend/bell.github.io/main/img/1.png');"></div>
+        
+        <div class="energy-box">
+            <div class="energy-info">
+                <span>⚡ <span id="e-current">1000</span></span>
+                <span style="color: #444;">/ 1000</span>
             </div>
             <div class="energy-bar">
-                <div class="energy-fill" id="energy-bar"></div>
+                <div id="energy-fill"></div>
             </div>
         </div>
     </div>
 
-    <div id="task-window">
-        <h1 style="color: #ff69b4;">Задания</h1>
-        <div class="task-card">
-            <div><b>Подпишись на Мамац</b><br><small>+50,000 $SVINO</small></div>
-            <button onclick="claim(50000)" style="background:#ff69b4; border:none; padding:10px; border-radius:10px; color:white;">Взять</button>
-        </div>
-        <button onclick="toggleView('main')" style="margin-top: 50px; background: none; border: 1px solid #333; color: #fff; width: 100%; padding: 15px; border-radius: 10px;">Назад</button>
+    <div class="nav">
+        <div class="nav-item active" onclick="closeSkins()">🏠<br>ГЛАВНАЯ</div>
+        <div class="nav-item" onclick="openSkins()">👗<br>ГАРДЕРОБ</div>
+        <div class="nav-item" onclick="alert('Скоро!')">🎁<br>DROPS</div>
     </div>
 
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="toggleView('main')">🏠<br>Home</div>
-        <div class="nav-item" onclick="toggleView('task')">🏆<br>Tasks</div>
-        <div class="nav-item" onclick="alert('AirDrop в пути!')">💰<br>Airdrop</div>
+    <div id="skins-modal">
+        <h2 style="color: var(--pink); text-align: center;">МАГАЗИН ОБРАЗОВ</h2>
+        <div id="skins-list"></div>
+        <button onclick="closeSkins()" style="width: 100%; margin-top: 20px; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px;">НАЗАД</button>
     </div>
 
     <script>
         let balance = parseInt(localStorage.getItem('svino_bal')) || 0;
         let energy = 1000;
-        const maxEnergy = 1000;
+        let currentSkinId = localStorage.getItem('active_skin') || 0;
+        let ownedSkins = JSON.parse(localStorage.getItem('owned_skins')) || [0];
+
+        const skins = [
+            { id: 0, name: "Обычная София", price: 0, power: 1, img: "https://raw.githubusercontent.com/Baltozar-Frontend/bell.github.io/main/img/1.png" },
+            { id: 1, name: "Мамац в халате", price: 1000, power: 5, img: "https://via.placeholder.com/150/ff69b4/ffffff?text=Халат" },
+            { id: 2, name: "Бизнес София", price: 10000, power: 25, img: "https://via.placeholder.com/150/00d2ff/ffffff?text=Бизнес" }
+        ];
 
         const scoreEl = document.getElementById('score');
-        const energyEl = document.getElementById('energy-count');
-        const barEl = document.getElementById('energy-bar');
-        const sound = document.getElementById('click-sound');
+        const sofia = document.getElementById('sofia');
+        const eFill = document.getElementById('energy-fill');
+        const eText = document.getElementById('e-current');
 
-        scoreEl.innerText = balance.toLocaleString();
-
-        function doClick(e) {
-            if (energy <= 0) return;
-
-            // Логика
-            balance += 10;
-            energy -= 1;
-            
-            // Сохранение и UI
+        function updateUI() {
             scoreEl.innerText = balance.toLocaleString();
-            energyEl.innerText = energy;
-            barEl.style.width = (energy / maxEnergy * 100) + '%';
-            localStorage.setItem('svino_bal', balance);
-
-            // Твой звук
-            sound.currentTime = 0;
-            sound.play();
-
-            // Текст +10
-            createPop(e);
+            eText.innerText = energy;
+            eFill.style.width = (energy / 10) + '%';
+            
+            const cur = skins.find(s => s.id == currentSkinId);
+            sofia.style.backgroundImage = `url('${cur.img}')`;
+            
+            // Если энергии нет - Мамац "устает"
+            if (energy <= 0) sofia.classList.add('tired');
+            else sofia.classList.remove('tired');
         }
 
-        function createPop(e) {
-            const x = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-            const y = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        function tap(e) {
+            if (energy <= 0) return;
+
+            const cur = skins.find(s => s.id == currentSkinId);
+            balance += cur.power;
+            energy -= 2; // Тратим по 2 энергии за клик
+
+            updateUI();
+            localStorage.setItem('svino_bal', balance);
+
+            // Анимация +N
+            const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
             const p = document.createElement('div');
-            p.className = 'pop';
-            p.innerText = '+10';
-            p.style.left = x + 'px';
-            p.style.top = y + 'px';
+            p.innerText = `+${cur.power}`;
+            p.style.cssText = `position:fixed; left:${x}px; top:${y}px; color:var(--gold); font-weight:900; pointer-events:none; z-index:1000; font-size:1.5rem;`;
             document.body.appendChild(p);
+            p.animate([{opacity:1, transform:'translateY(0)'}, {opacity:0, transform:'translateY(-120px)'}], 600);
             setTimeout(() => p.remove(), 600);
         }
 
-        function toggleView(v) {
-            document.getElementById('main-view').style.display = v === 'main' ? 'flex' : 'none';
-            document.getElementById('task-window').style.display = v === 'task' ? 'block' : 'none';
-        }
-
-        function claim(reward) {
-            balance += reward;
-            scoreEl.innerText = balance.toLocaleString();
-            localStorage.setItem('svino_bal', balance);
-            alert('Бонус получен!');
-        }
-
-        // Реген энергии
+        // Регенерация энергии (10 ед. в секунду)
         setInterval(() => {
-            if (energy < maxEnergy) {
-                energy += 2;
-                energyEl.innerText = energy;
-                barEl.style.width = (energy / maxEnergy * 100) + '%';
+            if (energy < 1000) {
+                energy += 5;
+                if (energy > 1000) energy = 1000;
+                updateUI();
             }
         }, 1000);
 
-        const btn = document.getElementById('sofia');
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); doClick(e); });
-        btn.addEventListener('mousedown', doClick);
+        function openSkins() { document.getElementById('skins-modal').style.display = 'block'; renderSkins(); }
+        function closeSkins() { document.getElementById('skins-modal').style.display = 'none'; }
+
+        function renderSkins() {
+            const list = document.getElementById('skins-list');
+            list.innerHTML = '';
+            skins.forEach(s => {
+                const isOwned = ownedSkins.includes(s.id);
+                const isActive = currentSkinId == s.id;
+                list.innerHTML += `
+                    <div class="skin-item">
+                        <img src="${s.img}" class="skin-preview">
+                        <div style="margin-left:15px;">
+                            <b>${s.name}</b><br>
+                            <small style="color:var(--gold)">Клик: +${s.power}</small>
+                        </div>
+                        <button class="buy-btn ${isOwned ? 'owned' : ''}" onclick="buySkin(${s.id})">
+                            ${isActive ? 'ВЫБРАНО' : (isOwned ? 'НАДЕТЬ' : s.price)}
+                        </button>
+                    </div>`;
+            });
+        }
+
+        function buySkin(id) {
+            const s = skins.find(x => x.id === id);
+            if (ownedSkins.includes(id)) {
+                currentSkinId = id;
+                localStorage.setItem('active_skin', id);
+            } else if (balance >= s.price) {
+                balance -= s.price;
+                ownedSkins.push(id);
+                currentSkinId = id;
+                localStorage.setItem('owned_skins', JSON.stringify(ownedSkins));
+                localStorage.setItem('active_skin', id);
+            }
+            updateUI();
+            renderSkins();
+        }
+
+        sofia.addEventListener('mousedown', tap);
+        sofia.addEventListener('touchstart', (e) => { e.preventDefault(); tap(e); });
+        
+        updateUI();
     </script>
 </body>
 </html>
