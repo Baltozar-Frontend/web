@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Мамац София | Svinocoin Miner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Хедер с балансом как в твоем проекте */
+        .header {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .balance {
+            font-size: 3.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-shadow: 0 0 20px #f3ba2f;
+        }
+
+        /* Мамац София - центральный объект (твоя 1.png) */
+        .click-area {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sofia-main {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            /* Ссылка на твой ассет */
+            background: url('https://raw.githubusercontent.com/Baltozar-Frontend/bell.github.io/main/img/1.png') center/cover;
+            border: 8px solid #ff69b4;
+            box-shadow: 0 0 50px rgba(255, 105, 180, 0.4);
+            cursor: pointer;
+            transition: transform 0.05s;
+        }
+
+        .sofia-main:active {
+            transform: scale(0.95);
+        }
+
+        /* Система Энергии */
+        .energy-container {
+            width: 85%;
+            margin-bottom: 120px;
+        }
+
+        .energy-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .energy-bar {
+            width: 100%;
+            height: 15px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .energy-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff69b4, #f3ba2f);
+            transition: width 0.2s;
+        }
+
+        /* Навигация (Задания и т.д.) */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #111;
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 0;
+            border-top: 1px solid #333;
+        }
+
+        .nav-item {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .nav-item.active { color: #ff69b4; }
+
+        /* Всплывающий текст клика */
+        .pop {
+            position: fixed;
+            color: #f3ba2f;
+            font-size: 2rem;
+            font-weight: 900;
+            pointer-events: none;
+            animation: fly 0.6s ease-out forwards;
+            z-index: 100;
+        }
+
+        @keyframes fly {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-100px); }
+        }
+
+        /* Окно заданий */
+        #task-window {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 200;
+            display: none; padding: 30px;
+        }
+        .task-card {
+            background: #111;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="click-sound" src="https://raw.githubusercontent.com/Baltozar-Frontend/bell.github.io/main/sound/click.mp3"></audio>
+
+    <div id="main-view" style="display: flex; flex-direction: column; align-items: center; height: 100%; width: 100%;">
+        <div class="header">
+            <div style="font-size: 0.7rem; color: #555; letter-spacing: 2px;">SVINOCOIN BALANCE</div>
+            <div class="balance">
+                <span id="score">0</span>
+            </div>
+        </div>
+
+        <div class="click-area">
+            <div class="sofia-main" id="sofia"></div>
+        </div>
+
+        <div class="energy-container">
+            <div class="energy-text">
+                <span>⚡ <span id="energy-count">1000</span> / 1000</span>
+                <span style="color: #ff69b4;">Level 1</span>
+            </div>
+            <div class="energy-bar">
+                <div class="energy-fill" id="energy-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="task-window">
+        <h1 style="color: #ff69b4;">Задания</h1>
+        <div class="task-card">
+            <div><b>Подпишись на Мамац</b><br><small>+50,000 $SVINO</small></div>
+            <button onclick="claim(50000)" style="background:#ff69b4; border:none; padding:10px; border-radius:10px; color:white;">Взять</button>
+        </div>
+        <button onclick="toggleView('main')" style="margin-top: 50px; background: none; border: 1px solid #333; color: #fff; width: 100%; padding: 15px; border-radius: 10px;">Назад</button>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="toggleView('main')">🏠<br>Home</div>
+        <div class="nav-item" onclick="toggleView('task')">🏆<br>Tasks</div>
+        <div class="nav-item" onclick="alert('AirDrop в пути!')">💰<br>Airdrop</div>
+    </div>
+
+    <script>
+        let balance = parseInt(localStorage.getItem('svino_bal')) || 0;
+        let energy = 1000;
+        const maxEnergy = 1000;
+
+        const scoreEl = document.getElementById('score');
+        const energyEl = document.getElementById('energy-count');
+        const barEl = document.getElementById('energy-bar');
+        const sound = document.getElementById('click-sound');
+
+        scoreEl.innerText = balance.toLocaleString();
+
+        function doClick(e) {
+            if (energy <= 0) return;
+
+            // Логика
+            balance += 10;
+            energy -= 1;
+            
+            // Сохранение и UI
+            scoreEl.innerText = balance.toLocaleString();
+            energyEl.innerText = energy;
+            barEl.style.width = (energy / maxEnergy * 100) + '%';
+            localStorage.setItem('svino_bal', balance);
+
+            // Твой звук
+            sound.currentTime = 0;
+            sound.play();
+
+            // Текст +10
+            createPop(e);
+        }
+
+        function createPop(e) {
+            const x = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const y = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            const p = document.createElement('div');
+            p.className = 'pop';
+            p.innerText = '+10';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 600);
+        }
+
+        function toggleView(v) {
+            document.getElementById('main-view').style.display = v === 'main' ? 'flex' : 'none';
+            document.getElementById('task-window').style.display = v === 'task' ? 'block' : 'none';
+        }
+
+        function claim(reward) {
+            balance += reward;
+            scoreEl.innerText = balance.toLocaleString();
+            localStorage.setItem('svino_bal', balance);
+            alert('Бонус получен!');
+        }
+
+        // Реген энергии
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy += 2;
+                energyEl.innerText = energy;
+                barEl.style.width = (energy / maxEnergy * 100) + '%';
+            }
+        }, 1000);
+
+        const btn = document.getElementById('sofia');
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); doClick(e); });
+        btn.addEventListener('mousedown', doClick);
+    </script>
+</body>
+</html>
