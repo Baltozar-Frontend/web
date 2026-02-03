@@ -3,65 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Мамац София | Рабочая версия</title>
+    <title>Андрей Коин | Игра</title>
     <style>
-        :root { --pink: #ff69b4; --gold: #f3ba2f; --bg: #000; }
+        :root { --pink: #007AFF; --gold: #f3ba2f; --bg: #000; }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
 
         body { 
-            background: var(--bg); color: #fff; font-family: sans-serif; 
+            background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             margin: 0; padding: 0; display: flex; flex-direction: column; 
             align-items: center; height: 100vh; overflow: hidden;
         }
 
         /* Баланс */
-        .score-container { margin-top: 40px; text-align: center; }
+        .score-container { margin-top: 50px; text-align: center; }
         #score { font-size: 3.5rem; font-weight: 900; color: var(--gold); }
 
         /* Зона клика */
         .game-zone { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
         
-        .sofia-btn {
-            width: 260px; height: 260px; border-radius: 50%;
+        .andrey-btn {
+            width: 280px; height: 280px; border-radius: 50%;
             background-size: cover; background-position: center;
-            border: 8px solid var(--pink);
-            box-shadow: 0 0 30px rgba(255, 105, 180, 0.3);
+            border: 5px solid #333;
+            box-shadow: 0 0 40px rgba(243, 186, 47, 0.2);
             cursor: pointer; transition: transform 0.05s;
+            /* Ссылка на твое фото из репозитория */
+            background-image: url('IMG_6247.jpeg'); 
         }
-        .sofia-btn:active { transform: scale(0.92); }
+        .andrey-btn:active { transform: scale(0.95); }
 
         /* Энергия */
-        .energy-box { width: 80%; max-width: 300px; margin-top: 30px; }
-        .energy-bar { width: 100%; height: 14px; background: #222; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
-        #energy-fill { width: 100%; height: 100%; background: linear-gradient(90deg, var(--pink), var(--gold)); transition: width 0.2s; }
+        .energy-box { width: 80%; max-width: 300px; margin-top: 40px; }
+        .energy-bar { width: 100%; height: 12px; background: #222; border-radius: 10px; overflow: hidden; }
+        #energy-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #f3ba2f, #ffcc00); transition: width 0.2s; }
 
         /* Меню */
-        .nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #111; padding: 15px 0; border-top: 1px solid #222; }
-        .nav-item { flex: 1; text-align: center; font-size: 0.7rem; cursor: pointer; color: #666; }
-        .nav-item.active { color: var(--pink); font-weight: bold; }
+        .nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #111; padding: 20px 0; border-top: 1px solid #222; }
+        .nav-item { flex: 1; text-align: center; font-size: 0.75rem; cursor: pointer; color: #888; }
+        .nav-item.active { color: #fff; font-weight: bold; }
 
-        /* Окна (модалки) */
-        .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; padding: 20px; }
-        .item { background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .buy-btn { background: var(--pink); border: none; padding: 10px; border-radius: 8px; color: #fff; font-weight: bold; }
+        /* Окна */
+        .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; padding: 30px 20px; }
+        .item { background: #1a1a1a; padding: 20px; border-radius: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .buy-btn { background: #fff; border: none; padding: 10px 15px; border-radius: 8px; color: #000; font-weight: bold; }
 
-        /* Анимация +10 */
-        .pop { position: fixed; color: #fff; font-weight: 900; pointer-events: none; animation: fly 0.6s forwards; z-index: 1000; }
-        @keyframes fly { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100px); } }
+        /* Анимация +1 */
+        .pop { position: fixed; color: #fff; font-size: 1.5rem; font-weight: 900; pointer-events: none; animation: fly 0.6s forwards; z-index: 1000; }
+        @keyframes fly { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-120px); } }
     </style>
 </head>
 <body>
 
     <div class="score-container">
         <div id="score">0</div>
-        <div style="font-size: 0.7rem; color: #555;">$SVINO COINS</div>
+        <div style="font-size: 0.9rem; color: #888; letter-spacing: 1px;">$ANDREY COIN</div>
     </div>
 
     <div class="game-zone" id="game-screen">
-        <div class="sofia-btn" id="sofia" style="background-image: url('https://raw.githubusercontent.com/Baltozar-Frontend/bell.github.io/main/img/1.png');"></div>
+        <div class="andrey-btn" id="andrey-target"></div>
         <div class="energy-box">
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:8px;">
                 <span>⚡ <span id="e-val">1000</span></span>
                 <span id="e-max">/ 1000</span>
             </div>
@@ -70,39 +72,37 @@
     </div>
 
     <div class="screen" id="boosts-screen">
-        <h2 style="text-align:center; color: var(--gold);">БУСТЫ</h2>
+        <h2 style="text-align:center; margin-bottom:30px;">МАГАЗИН</h2>
         <div class="item">
-            <div><b>☕ Кофе</b><br><small>Вся энергия</small></div>
-            <button class="buy-btn" onclick="buyFullEnergy()">500 $</button>
+            <div><b>☕ Энергетик</b><br><small>Восстановить всё</small></div>
+            <button class="buy-btn" onclick="buyFullEnergy()">500</button>
         </div>
         <div class="item">
-            <div><b>🔋 Батарея</b><br><small>Макс. энергия +500</small></div>
-            <button class="buy-btn" onclick="buyMaxEnergy()">2000 $</button>
+            <div><b>🔋 Батарея</b><br><small>Лимит +500</small></div>
+            <button class="buy-btn" onclick="buyMaxEnergy()">2000</button>
         </div>
-        <button onclick="openTab('game')" style="width:100%; margin-top:20px; color:#555; background:none; border:none;">Назад</button>
+        <button onclick="openTab('game')" style="width:100%; margin-top:30px; color:#888; background:none; border:none; font-size:1rem;">← Закрыть</button>
     </div>
 
     <div class="nav">
-        <div class="nav-item active" onclick="openTab('game')">🏠<br>ДОМ</div>
+        <div class="nav-item active" onclick="openTab('game')">🔘<br>ТАРГЕТ</div>
         <div class="nav-item" onclick="openTab('boosts')">🚀<br>БУСТЫ</div>
-        <div class="nav-item" onclick="alert('AirDrop скоро!')">💰<br>AIRDROP</div>
+        <div class="nav-item" onclick="alert('Скоро листинг!')">💎<br>AIRDROP</div>
     </div>
 
     <script>
-        // Данные
-        let balance = parseInt(localStorage.getItem('svino_bal')) || 0;
-        let maxEnergy = parseInt(localStorage.getItem('svino_max_e')) || 1000;
+        let balance = parseInt(localStorage.getItem('andrey_bal')) || 0;
+        let maxEnergy = parseInt(localStorage.getItem('andrey_max_e')) || 1000;
         let energy = maxEnergy;
 
-        // Элементы
         const scoreEl = document.getElementById('score');
         const energyEl = document.getElementById('e-val');
         const energyMaxEl = document.getElementById('e-max');
         const energyFill = document.getElementById('energy-fill');
-        const sofia = document.getElementById('sofia');
+        const target = document.getElementById('andrey-target');
 
         function updateUI() {
-            scoreEl.innerText = Math.floor(balance).toLocaleString();
+            scoreEl.innerText = balance.toLocaleString();
             energyEl.innerText = Math.floor(energy);
             energyMaxEl.innerText = "/ " + maxEnergy;
             energyFill.style.width = (energy / maxEnergy * 100) + '%';
@@ -116,7 +116,6 @@
             updateUI();
             save();
 
-            // Анимация текста
             const x = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
             const y = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
             createPop(x, y);
@@ -133,8 +132,8 @@
         }
 
         function save() {
-            localStorage.setItem('svino_bal', balance);
-            localStorage.setItem('svino_max_e', maxEnergy);
+            localStorage.setItem('andrey_bal', balance);
+            localStorage.setItem('andrey_max_e', maxEnergy);
         }
 
         function openTab(tab) {
@@ -145,10 +144,9 @@
             if (balance >= 500) {
                 balance -= 500;
                 energy = maxEnergy;
-                updateUI();
-                save();
-                alert('Энергия восстановлена!');
-            } else { alert('Мало $SVINO!'); }
+                updateUI(); save();
+                alert('Энергия на максимуме!');
+            } else { alert('Не хватает коинов!'); }
         }
 
         function buyMaxEnergy() {
@@ -156,24 +154,20 @@
                 balance -= 2000;
                 maxEnergy += 500;
                 energy = maxEnergy;
-                updateUI();
-                save();
-                alert('Батарея улучшена!');
-            } else { alert('Мало $SVINO!'); }
+                updateUI(); save();
+                alert('Лимит увеличен!');
+            } else { alert('Не хватает коинов!'); }
         }
 
-        // Регенерация энергии (2 ед. в секунду)
         setInterval(() => {
             if (energy < maxEnergy) {
-                energy += 2;
-                if (energy > maxEnergy) energy = maxEnergy;
+                energy += 1;
                 updateUI();
             }
-        }, 1000);
+        }, 1500);
 
-        // Слушатели событий
-        sofia.addEventListener('touchstart', (e) => { e.preventDefault(); tap(e); });
-        sofia.addEventListener('mousedown', tap);
+        target.addEventListener('touchstart', (e) => { e.preventDefault(); tap(e); });
+        target.addEventListener('mousedown', tap);
 
         updateUI();
     </script>
